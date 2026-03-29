@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Davos Browser</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="browser-shell">
+      <div class="toolbar">
+        <div class="tab-row">
+          <div class="tab-strip" id="tab-strip"></div>
+          <div class="tab-actions">
+            <button class="tab new-tab" id="new-tab-btn" title="New tab">+</button>
+            <button id="close-app-btn" title="Close app">×</button>
+          </div>
+        </div>
+
+        <div class="navigation-bar">
+          <div class="nav-controls">
+            <button id="nav-back" title="Back">◀</button>
+            <button id="nav-forward" title="Forward">▶</button>
+            <button id="nav-reload" title="Reload"><span class="reload-icon">⟳</span></button>
+            <button id="nav-home" title="Home">🏠</button>
+          </div>
+          <input id="address-bar" type="text" placeholder="Enter URL or search query" autocomplete="off" spellcheck="false" />
+          <button id="video-popout-btn" title="Pop Out">Pop Out</button>
+          <button id="settings-btn" title="Settings">⚙</button>
+        </div>
+      </div>
+
+      <div id="search-overlay" class="search-overlay" aria-hidden="true">
+        <div class="search-dialog">
+          <div class="search-dialog__title">Quick Search</div>
+          <input id="search-overlay-input" type="text" placeholder="Type address or search query" autocomplete="off" spellcheck="false" />
+          <div class="search-dialog__hint">Press Esc to close</div>
+        </div>
+      </div>
+
+      <div id="webview-container" class="webview-container"></div>
+    </div>
+
+    <div id="settings-modal" class="settings-modal" aria-hidden="true">
+      <div class="settings-panel">
+        <div class="settings-header">
+          <div>
+            <h2>Settings</h2>
+            <p>Customize bindings, appearance, and privacy behavior.</p>
+          </div>
+          <button id="settings-close" class="settings-close" title="Close settings">×</button>
+        </div>
+
+        <div class="settings-tabs" role="tablist">
+          <button class="settings-tab active" data-tab="keybinds" role="tab">Keybinds</button>
+          <button class="settings-tab" data-tab="personalisation" role="tab">Personalisation</button>
+          <button class="settings-tab" data-tab="privacy" role="tab">Privacy</button>
+        </div>
+
+        <div class="settings-body">
+          <section class="settings-section active" data-section="keybinds">
+            <h3>Keybinds</h3>
+            <p>Rebind tab controls and mouse interactions.</p>
+            <div class="settings-control">
+              <label for="tab-middle-click-action">Middle-click on tab:</label>
+              <select id="tab-middle-click-action">
+                <option value="close">Close tab</option>
+                <option value="none">No action</option>
+              </select>
+            </div>
+            <div class="settings-control">
+              <label for="shortcut-open-search">Open search overlay</label>
+              <input id="shortcut-open-search" type="text" placeholder="Ctrl+Space" />
+            </div>
+            <div class="settings-control">
+              <label for="shortcut-mute-tab">Mute tab shortcut</label>
+              <input id="shortcut-mute-tab" type="text" placeholder="Ctrl+M" />
+            </div>
+            <div class="settings-control">
+              <label for="shortcut-refresh-tab">Refresh tab shortcut</label>
+              <input id="shortcut-refresh-tab" type="text" placeholder="F5" />
+            </div>
+            <div class="settings-control">
+              <label>Website shortcuts</label>
+              <div class="website-shortcut-row">
+                <input id="website-shortcut-key-1" type="text" placeholder="Alt+1" />
+                <input id="website-shortcut-url-1" type="text" placeholder="https://example.com" />
+              </div>
+              <div class="website-shortcut-row">
+                <input id="website-shortcut-key-2" type="text" placeholder="Alt+2" />
+                <input id="website-shortcut-url-2" type="text" placeholder="https://example.com" />
+              </div>
+              <div class="website-shortcut-row">
+                <input id="website-shortcut-key-3" type="text" placeholder="Alt+3" />
+                <input id="website-shortcut-url-3" type="text" placeholder="https://example.com" />
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section" data-section="personalisation">
+            <h3>Personalisation</h3>
+            <p>Adjust colors, gradients, and glow effects for the browser shell.</p>
+            <div class="settings-control">
+              <label for="theme-accent">Accent color</label>
+              <input type="color" id="theme-accent" />
+            </div>
+            <div class="settings-control theme-gradient-dependent hidden">
+              <label for="theme-gradient-accent">Accent gradient color</label>
+              <input type="color" id="theme-gradient-accent" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-surface">Panel surface</label>
+              <input type="color" id="theme-surface" />
+            </div>
+            <div class="settings-control theme-gradient-dependent hidden">
+              <label for="theme-gradient-surface">Panel gradient color</label>
+              <input type="color" id="theme-gradient-surface" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-background">Background color</label>
+              <input type="color" id="theme-background" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-border-color">Border color</label>
+              <input type="color" id="theme-border-color" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-border-width">Border width (px)</label>
+              <input type="number" id="theme-border-width" min="0" max="8" step="1" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-tab-active-bg">Selected tab color</label>
+              <input type="color" id="theme-tab-active-bg" />
+            </div>
+            <div class="settings-control theme-gradient-dependent hidden">
+              <label for="theme-gradient-tab-active">Selected tab gradient color</label>
+              <input type="color" id="theme-gradient-tab-active" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-tab-inactive-bg">Inactive tab color</label>
+              <input type="color" id="theme-tab-inactive-bg" />
+            </div>
+            <div class="settings-control theme-gradient-dependent hidden">
+              <label for="theme-gradient-tab-inactive">Inactive tab gradient color</label>
+              <input type="color" id="theme-gradient-tab-inactive" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-tab-active-text">Selected tab text</label>
+              <input type="color" id="theme-tab-active-text" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-tab-inactive-text">Inactive tab text</label>
+              <input type="color" id="theme-tab-inactive-text" />
+            </div>
+            <div class="settings-control">
+              <label for="theme-settings-font-color">Settings font color</label>
+              <input type="color" id="theme-settings-font-color" />
+            </div>
+            <div class="settings-control switch-control">
+              <label for="theme-gradient">Enable gradient</label>
+              <input type="checkbox" id="theme-gradient" />
+            </div>
+            <div class="settings-control switch-control">
+              <label for="theme-glow">Enable glow highlights</label>
+              <input type="checkbox" id="theme-glow" />
+            </div>
+          </section>
+
+          <section class="settings-section" data-section="privacy">
+            <h3>Privacy</h3>
+            <p>Clear stored cookies and browser data for a privacy fresh start.</p>
+            <div class="settings-control switch-control">
+              <label for="cookie-enabled">Enable cookies</label>
+              <input type="checkbox" id="cookie-enabled" />
+            </div>
+            <div class="settings-control">
+              <label for="cookie-level">Cookie level</label>
+              <select id="cookie-level">
+                <option value="allowAll">Allow all cookies</option>
+                <option value="blockThirdParty">Block third-party cookies</option>
+                <option value="blockCrossSite">Block cross-site cookies (strict)</option>
+                <option value="blockAll">Block all cookies</option>
+              </select>
+            </div>
+            <div class="settings-control">
+              <label>Cookie exceptions</label>
+              <div class="cookie-exception-row">
+                <input id="cookie-exception-domain-1" type="text" placeholder="example.com" />
+                <select id="cookie-exception-action-1">
+                  <option value="allow">Allow</option>
+                  <option value="block">Block</option>
+                </select>
+              </div>
+              <div class="cookie-exception-row">
+                <input id="cookie-exception-domain-2" type="text" placeholder="example.com" />
+                <select id="cookie-exception-action-2">
+                  <option value="allow">Allow</option>
+                  <option value="block">Block</option>
+                </select>
+              </div>
+              <div class="cookie-exception-row">
+                <input id="cookie-exception-domain-3" type="text" placeholder="example.com" />
+                <select id="cookie-exception-action-3">
+                  <option value="allow">Allow</option>
+                  <option value="block">Block</option>
+                </select>
+              </div>
+              <div class="cookie-exception-row">
+                <input id="cookie-exception-domain-4" type="text" placeholder="example.com" />
+                <select id="cookie-exception-action-4">
+                  <option value="allow">Allow</option>
+                  <option value="block">Block</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-control buttons-grid">
+              <button id="clear-cookies-btn" class="settings-action">Clear cookies</button>
+              <button id="clear-storage-btn" class="settings-action">Clear site storage</button>
+              <button id="clear-all-btn" class="settings-action">Clear all data</button>
+              <button id="clear-passwords-btn" class="settings-action">Clear saved passwords</button>
+            </div>
+            <div id="privacy-status" class="privacy-status"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div id="credential-save-modal" class="settings-modal" aria-hidden="true">
+      <div class="settings-panel">
+        <div class="settings-header">
+          <div>
+            <h2>Save login</h2>
+            <p id="credential-save-text">Save login credentials?</p>
+          </div>
+        </div>
+        <div class="settings-body">
+          <div class="buttons-grid">
+            <button id="credential-save-confirm" class="settings-action">Save</button>
+            <button id="credential-save-dismiss" class="settings-action">Dismiss</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "davos-browser",
+  "version": "0.1.0",
+  "description": "Electron-based browser with tabs, navigation, and webviews.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder",
+    "dist": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.davos.browser",
+    "productName": "Davos Browser",
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "author": "davos",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^26.8.1"
+  }
+}
